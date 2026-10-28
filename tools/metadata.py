@@ -1,14 +1,20 @@
 from db.connection import get_connection
 
 
-def listar_tablas():
-    """Lista las tablas de usuario disponibles en la base de datos configurada."""
+def listar_tablas(database: str):
+    """Lista tablas de usuario de ERP, TMS o kactus."""
 
-    with get_connection() as conn:
+    conn = get_connection(database)
+
+    try:
         with conn.cursor() as cursor:
             cursor.execute("""
-                SELECT TABLE_NAME
+                SELECT
+                    TABLE_SCHEMA,
+                    TABLE_NAME
                 FROM INFORMATION_SCHEMA.TABLES
                 WHERE TABLE_TYPE = 'BASE TABLE'
             """)
             return cursor.fetchall()
+    finally:
+        conn.close()

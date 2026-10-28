@@ -125,12 +125,17 @@ def _validate_select_query(query: str) -> None:
         raise ValueError(f"Comando no permitido: {keyword}")
 
 
-def ejecutar_select(query: str):
-    """Ejecuta una consulta SELECT de solo lectura en la base de datos."""
-
+def ejecutar_select(
+    database: str,
+    query: str,
+):
+    """Ejecuta SELECT de solo lectura en ERP, TMS o kactus."""
     _validate_select_query(query)
 
-    with get_connection() as conn:
+    conn = get_connection(database)
+    try:
         with conn.cursor() as cursor:
             cursor.execute(query)
             return cursor.fetchall()
+    finally:
+        conn.close()

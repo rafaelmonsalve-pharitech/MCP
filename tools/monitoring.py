@@ -1,10 +1,14 @@
 from db.connection import get_connection
 
 
-def health_check():
-    """Comprueba la conexión y devuelve el nombre del servidor SQL."""
+def health_check(database: str):
+    """Comprueba ERP, TMS o kactus e informa el servidor SQL."""
 
-    with get_connection() as conn:
+    conn = get_connection(database)
+
+    try:
         with conn.cursor() as cursor:
             cursor.execute("SELECT @@SERVERNAME servidor")
             return cursor.fetchone()
+    finally:
+        conn.close()

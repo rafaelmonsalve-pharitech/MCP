@@ -1,6 +1,6 @@
 # MCP para SQL Server
 
-Servidor MCP local que ofrece herramientas de solo lectura para consultar una base de datos SQL Server desde VS Code.
+Servidor MCP local que ofrece herramientas de solo lectura para consultar varias bases de datos SQL Server desde VS Code.
 
 ## Requisitos
 
@@ -41,13 +41,26 @@ Servidor MCP local que ofrece herramientas de solo lectura para consultar una ba
    Copy-Item .env.example .env
    ```
 
-   Completa `.env` únicamente en tu equipo con los datos proporcionados por el administrador de la base de datos:
+   Completa en `.env` únicamente las bases que vayas a utilizar, con los datos proporcionados por el administrador. Configura los valores para cada alias que vayas a consultar:
 
    ```dotenv
-   SQL_SERVER=
-   SQL_DATABASE=
-   SQL_USER=
-   SQL_PASSWORD=
+   # Base ERP (alias: ERP)
+   DB1_SERVER=
+   DB1_DATABASE=
+   DB1_USER=
+   DB1_PASSWORD=
+
+   # Base TMS (alias: TMS)
+   DB2_SERVER=
+   DB2_DATABASE=
+   DB2_USER=
+   DB2_PASSWORD=
+
+   # Base Kactus (alias: kactus)
+   DB3_SERVER=
+   DB3_DATABASE=
+   DB3_USER=
+   DB3_PASSWORD=
    ```
 
    No guardes credenciales en el código ni las subas al repositorio. `.env` está excluido por Git.
@@ -68,15 +81,16 @@ Desde un chat de VS Code con las herramientas MCP habilitadas, verifica que est�
 
 - `health_check`: comprueba la conexión e informa el nombre del servidor.
 - `listar_tablas`: lista las tablas de usuario.
+- `listar_procedimientos`: lista los procedimientos almacenados.
 - `ejecutar_select`: ejecuta una consulta de lectura.
 
-Para una prueba de consulta sencilla, solicita a la herramienta `ejecutar_select`:
+Las cuatro herramientas reciben el nombre de la base (`ERP`, `TMS` o `kactus`). Por ejemplo, para probar una consulta sencilla en `TMS`, solicita a `ejecutar_select`:
 
 ```sql
 SELECT 1 AS prueba
 ```
 
-`health_check`, `listar_tablas` y `ejecutar_select` se conectan a la base de datos configurada. La prueba `SELECT 1` no modifica datos. El código de `ejecutar_select` rechaza consultas que no comienzan con `SELECT` o `WITH`, comandos de escritura reconocidos y sentencias múltiples. Por seguridad, configura además `SQL_USER` con permisos de solo lectura en SQL Server.
+`health_check`, `listar_tablas`, `listar_procedimientos` y `ejecutar_select` se conectan a la base seleccionada. La prueba `SELECT 1` no modifica datos. El código de `ejecutar_select` rechaza consultas que no comienzan con `SELECT` o `WITH`, comandos de escritura reconocidos y sentencias múltiples. Por seguridad, configura las cuentas de cada base con permisos de solo lectura en SQL Server.
 
 ## Herramientas de consulta
 

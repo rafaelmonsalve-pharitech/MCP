@@ -1,23 +1,9 @@
-import os
-
 import pytds
-from dotenv import load_dotenv
 
-load_dotenv()
+from db.databases import get_database_settings
 
 
-def get_connection():
-    required_settings = ("SQL_SERVER", "SQL_DATABASE", "SQL_USER", "SQL_PASSWORD")
-    missing_settings = [name for name in required_settings if not os.getenv(name)]
-    if missing_settings:
-        raise RuntimeError(
-            "Faltan variables de configuración: " + ", ".join(missing_settings)
-        )
-
-    return pytds.connect(
-        server=os.environ["SQL_SERVER"],
-        database=os.environ["SQL_DATABASE"],
-        user=os.environ["SQL_USER"],
-        password=os.environ["SQL_PASSWORD"],
-        as_dict=True
-    )
+def get_connection(database: str):
+    """Open a connection to one of the configured SQL Server databases."""
+    settings = get_database_settings(database)
+    return pytds.connect(**settings, as_dict=True)
